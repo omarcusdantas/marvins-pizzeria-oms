@@ -1,0 +1,163 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+h2 {
+    font-size: 32px;
+}
+
+a {
+    text-decoration: none;
+}
+
+button, input[type="submit"] {
+    cursor: pointer;
+    border: none;
+}
+
+body {
+    background-color: #fafafa;
+}
+
+.logo img {
+    width: 130px;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000000;
+    padding: 10px 40px;
+    gap: 30px;
+    height: 82px;
+}
+
+nav {
+    max-width: 1440px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+nav a {
+    color: #FFFFFF;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+nav a:hover {
+    color: #c54747;
+}
+
+.menu-space {
+    height: 25px;
+    width: 3px;
+    background-color: white;
+}
+
+footer {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    background-color: #000000;
+    color: #ffffff;
+    display: flex;
+    font-weight: 700;
+    align-items: center;
+    justify-content: center;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-container, .orders-container {
+    max-width: 1440px;
+    width: 80%;
+    margin: 40px 0;
+    background-color: #e5e5e5;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-container h2, .orders-container h2 {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.alert {
+    text-align: center;
+    font-weight: 700;
+    padding: 20px;
+    font-size: 18px;
+}
+
+.alert-success {
+    border: 2px solid #155724;
+    color: #155724;
+    background-color: #d4edda;
+}
+
+.alert-warning {
+    border: 2px solid #856404;
+    color: #856404;
+    background-color: #fff3cd;
+}
+
+@media(max-width: 768px) {
+    .nav-link {
+        padding: 0;
+        text-align: center;
+    }
+
+    .nav-link:first-child {
+        margin-right: 35px;
+    }
+
+    .main-container, .orders-container {
+        margin: 20px 0;
+    }
+
+}
+
+@media (max-width: 576px) {
+    footer {
+        height: 100px;
+    }
+    
+    .nav-link {
+        font-size: 14px;
+    }
+
+    .main-container, .orders-container {
+        width: 90%;
+    }
+
+    .logo img {
+        width: 100px;
+    }
+
+    header {
+        gap: 10px;
+    }
+
+    .main-container h2, .orders-container h2 {
+        font-size: 28px;
+    }
+}
