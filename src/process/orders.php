@@ -1,96 +1,94 @@
 <?php 
     include_once("conn.php");
-    $method = $_SERVER["REQUEST_METHOD"];
 
-    if ($method === "GET") {
+    // Function to retrieve the toppings for a specific pizza
+    function getOrderToppings($conn, $pizzaId) {
+        $toppingsQuery = $conn->prepare("SELECT * FROM pizzas_toppings WHERE pizza_id = :pizza_id");
+        $toppingsQuery->bindParam(":pizza_id", $pizzaId);
+        $toppingsQuery->execute();
+
+        $pizzaToppings = [];
+        $toppingQuery = $conn->prepare("SELECT * FROM toppings WHERE id = :topping_id");
+
+        while ($topping = $toppingsQuery->fetch(PDO::FETCH_ASSOC)) {
+            $toppingQuery->bindParam(":topping_id", $topping["topping_id"]);
+            $toppingQuery->execute();
+            $pizzaTopping = $toppingQuery->fetch(PDO::FETCH_ASSOC);
+            array_push($pizzaToppings, $pizzaTopping["topping"]);
+        }
+
+        return $pizzaToppings;
+    }
+
+    // Function to retrieve data for a specific order
+    function getOrderData($conn, $tableName, $id) {
+        $query = $conn->prepare("SELECT * FROM $tableName WHERE id = :id");
+        $query->bindParam(":id", $id);
+        $query->execute();
+        return $query->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Function to retrieve all orders and their details
+    function getOrders($conn) {
         $ordersQuery = $conn->query("SELECT * from orders;");
         $orders = $ordersQuery->fetchAll();
-        $ordersStatusQuery = $conn->query("SELECT * FROM orders_status;");
-        $ordersStatus = $ordersStatusQuery->fetchAll();
-        
+
         $pizzas = [];
         foreach ($orders as $order) {
             $pizza = [];
             $pizza["id"] = $order["pizza_id"];
 
-            $pizzaQuery = $conn->prepare("SELECT * FROM pizzas WHERE id = :pizza_id");
-            $pizzaQuery->bindParam(":pizza_id", $pizza["id"]);
-            $pizzaQuery->execute();
-            $pizzaData = $pizzaQuery->fetch(PDO::FETCH_ASSOC);
+            $pizzaData = getOrderData($conn, "pizzas", $pizza["id"]);
+            $size = getOrderData($conn, "sizes", $pizzaData["size_id"]);
+            $crust = getOrderData($conn, "crusts", $pizzaData["crust_id"]);
+            $toppings = getOrderToppings($conn, $pizza["id"]);
+            $status = getOrderData($conn, "orders_status", $order["status_id"]);
 
-            $sizeQuery = $conn->prepare("SELECT * FROM sizes WHERE id = :size_id");
-            $sizeQuery->bindParam(":size_id", $pizzaData["size_id"]);
-            $sizeQuery->execute();
-            $size = $sizeQuery->fetch(PDO::FETCH_ASSOC);
             $pizza["size"] = $size["size"];
-
-            $crustQuery = $conn->prepare("SELECT * FROM crusts WHERE id = :crust_id");
-            $crustQuery->bindParam(":crust_id", $pizzaData["crust_id"]);
-            $crustQuery->execute();
-            $crust = $crustQuery->fetch(PDO::FETCH_ASSOC);
             $pizza["crust"] = $crust["crust"];
-
-            $toppingsQuery = $conn->prepare("SELECT * FROM pizzas_toppings WHERE pizza_id = :pizza_id");
-            $toppingsQuery->bindParam(":pizza_id", $pizza["id"]);
-            $toppingsQuery->execute();
-            $toppings = $toppingsQuery->fetchAll(PDO::FETCH_ASSOC);
-
-            $pizzaToppings = [];
-            $toppingQuery = $conn->prepare("SELECT * FROM toppings WHERE id = :topping_id");
-
-            foreach ($toppings as $topping) {
-                $toppingQuery->bindParam(":topping_id", $topping["topping_id"]);
-                $toppingQuery->execute();
-                $pizzaTopping = $toppingQuery->fetch(PDO::FETCH_ASSOC);
-                array_push($pizzaToppings, $pizzaTopping["topping"]);
-            }
-
-            $statusQuery = $conn->prepare("SELECT * FROM orders_status WHERE id = :status_id");
-            $statusQuery->bindParam(":status_id", $order["status_id"]);
-            $statusQuery->execute();
-            $status = $statusQuery->fetch(PDO::FETCH_ASSOC);
+            $pizza["toppings"] = $toppings;
             $pizza["status"] = $status["status"];
 
-            $pizza["toppings"] = $pizzaToppings;
             array_push($pizzas, $pizza);
         }
-    }
-    else if ($method === "POST") {
-        $type = $_POST["type"];
 
+        return $pizzas;
+    }
+
+    // Function to update the status of an order
+    function updateOrderStatus($conn, $pizzaId, $statusId) {
+        $updateQuery = $conn->prepare("UPDATE orders SET status_id = :status_id WHERE pizza_id = :pizza_id");
+        $updateQuery->bindParam(":status_id", $statusId, PDO::PARAM_INT);
+        $updateQuery->bindParam(":pizza_id", $pizzaId, PDO::PARAM_INT);
+        $updateQuery->execute();
+    }
+    
+    // Function to handle the POST request for updating order status
+    function handlePostRequest($conn) {
+        $type = $_POST["type"];
+    
         if ($type === "cancel") {
             $pizzaId = $_POST["id"];
-            $updateQuery = $conn->prepare("UPDATE orders SET status_id = 4 WHERE pizza_id = :pizza_id");
-
-            $updateQuery->bindParam(":pizza_id", $pizzaId, PDO::PARAM_INT);
-
-            $updateQuery->execute();
-            $_SESSION["msg"] = "Order updated";
-            $_SESSION["status"] = "success";
-        }
-
-        else if ($type === "complete") {
+            updateOrderStatus($conn, $pizzaId, 4);
+        } else if ($type === "complete") {
             $pizzaId = $_POST["id"];
-            $updateQuery = $conn->prepare("UPDATE orders SET status_id = 3 WHERE pizza_id = :pizza_id");
-
-            $updateQuery->bindParam(":pizza_id", $pizzaId, PDO::PARAM_INT);
-
-            $updateQuery->execute();
-            $_SESSION["msg"] = "Order updated";
-            $_SESSION["status"] = "success";
-        }
-
-        else if ($type === "prepare") {
+            updateOrderStatus($conn, $pizzaId, 3);
+        } else if ($type === "prepare") {
             $pizzaId = $_POST["id"];
-            $updateQuery = $conn->prepare("UPDATE orders SET status_id = 2 WHERE pizza_id = :pizza_id");
-
-            $updateQuery->bindParam(":pizza_id", $pizzaId, PDO::PARAM_INT);
-
-            $updateQuery->execute();
-            $_SESSION["msg"] = "Order updated";
-            $_SESSION["status"] = "success";
+            updateOrderStatus($conn, $pizzaId, 2);
         }
-
+    
+        $_SESSION["msg"] = "Order updated";
+        $_SESSION["status"] = "success";
         header("Location: ../../dashboard.php");
+    }
+
+    // Main logic to handle the request method
+    $method = $_SERVER["REQUEST_METHOD"];
+
+    if ($method === "GET") {
+        $pizzas = getOrders($conn);
+    } else if ($method === "POST") {
+        handlePostRequest($conn);
     }
 ?>

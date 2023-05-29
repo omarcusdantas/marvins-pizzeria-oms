@@ -1,3 +1,15 @@
+<?php 
+    include("./src/process/conn.php");
+    $msg = "";
+
+    if (isset($_SESSION["msg"])) {
+        $msg = $_SESSION["msg"];
+        $status = $_SESSION["status"];
+        $_SESSION["msg"] = "";
+        $_SESSION["status"] = "";
+    }
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,12 +27,18 @@
 </head>
 <body>
     <header>
-        <a href="" class="logo">
+        <a href="./index.php" class="logo">
             <img src="./src/img/marvins-logo.png" alt="Marvin's Pizzeria">
+            <h1>Marvin's Pizzeria OMS</h1>
         </a>
         <nav>
-            <a href="">Register Order</a>
+            <a href="./index.php">Register Order</a>
             <div class="menu-space"></div>
-            <a href="">Order Management</a>
+            <a href="./dashboard.php">Order Management</a>
         </nav>
     </header>
+    <?php if ($msg !== ""): ?>
+        <div class="alert alert-<?= $status?>">
+            <p><?= $msg ?></p>
+        </div>
+    <?php endif; ?>

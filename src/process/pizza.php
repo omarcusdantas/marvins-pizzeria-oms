@@ -1,65 +1,86 @@
 <?php
     include_once("conn.php");
 
-    $method = $_SERVER["REQUEST_METHOD"];
+    // Function to create a new order in the database
+    function createOrder($conn, $pizzaId) {
+        $stmt = $conn->prepare("INSERT INTO orders (pizza_id, status_id) VALUES (:pizza, :status)");
+        $statusPendingId = 1;
+        $stmt->bindParam(":pizza", $pizzaId, PDO::PARAM_INT);
+        $stmt->bindParam(":status", $statusPendingId, PDO::PARAM_INT);
+        $stmt->execute();
+    }
 
-    if ($method === "GET") {
-        $sizesQuery = $conn->query("SELECT * FROM sizes;");
-        $sizes = $sizesQuery->fetchAll();
+    // Function to create a new pizza in the database
+    function createPizza($conn, $size, $crust, $toppings) {
+        $stmt = $conn->prepare("INSERT INTO pizzas (size_id, crust_id) VALUES (:size, :crust)");
+        $stmt->bindParam(":size", $size, PDO::PARAM_INT);
+        $stmt->bindParam(":crust", $crust, PDO::PARAM_INT);
+        $stmt->execute();
+    
+        $pizzaId = $conn->lastInsertId();
+        $stmt = $conn->prepare("INSERT INTO pizzas_toppings (pizza_id, topping_id) VALUES (:pizza, :topping)");
+    
+        foreach($toppings as $topping) {
+            $stmt->bindParam(":pizza", $pizzaId, PDO::PARAM_INT);
+            $stmt->bindParam(":topping", $topping, PDO::PARAM_INT);
+            $stmt->execute();
+        }
+    
+        return $pizzaId;
+    }
 
-        $crustsQuery = $conn->query("SELECT * FROM crusts;");
-        $crusts = $crustsQuery->fetchAll();
+     // Function to validate the pizza order
+    function validatePizzaOrder($size, $crust, $toppings) {
+        if ($size === "" || $crust === "") {
+            return "Size and crust must be selected";
+        } else if (count($toppings) > 1 && $size === "1") {
+            return "For small pizzas, maximum of 1 topping";
+        } else if (count($toppings) > 2 && $size !== "1") {
+            return "For medium and large pizzas, maximum of 2 toppings";
+        }
+    
+        return "";
+    }
 
-        $toppingsQuery = $conn->query("SELECT * FROM toppings;");
-        $toppings = $toppingsQuery->fetchAll();
-    } 
-    else if ($method === "POST") {
+    // Function to handle the POST request
+    function handlePostRequest($conn) {
         $data = $_POST;
 
         $size = $data["size"];
         $crust = $data["crust"];
         $toppings = $data["toppings"];
 
-        if ($size === "" || $crust === "") {
-            $_SESSION["msg"] = "Size and crust must be selected";
+        $errorMsg = validatePizzaOrder($size, $crust, $toppings);
+        
+        if ($errorMsg !== "") {
+            $_SESSION["msg"] = $errorMsg;
             $_SESSION["status"] = "warning";
-        }
-        else if (count($toppings) > 1 && $size === "1") {
-            $_SESSION["msg"] = "For small pizzas, maximum of 1 topping";
-            $_SESSION["status"] = "warning";
-        }
-        else if (count($toppings) > 2 && $size !== "1") {
-            $_SESSION["msg"] = "For medium and large pizzas, maximum of 2 toppings";
-            $_SESSION["status"] = "warning";
-        }
-        else {
-            $stmt = $conn->prepare("INSERT INTO pizzas (size_id, crust_id) VALUES (:size, :crust)");
+            header("Location: ../..");
+            return;
+        } 
 
-            $stmt->bindParam(":size", $size, PDO::PARAM_INT);
-            $stmt->bindParam(":crust", $crust, PDO::PARAM_INT);
+        $pizzaId = createPizza($conn, $size, $crust, $toppings);
+        createOrder($conn, $pizzaId);
 
-            $stmt->execute();
-
-            $pizzaId = $conn->lastInsertId();
-            $stmt = $conn->prepare("INSERT INTO pizzas_toppings (pizza_id, topping_id) VALUES (:pizza, :topping)");
-
-            foreach($toppings as $topping) {
-                $stmt->bindParam(":pizza", $pizzaId, PDO::PARAM_INT);
-                $stmt->bindParam(":topping", $topping, PDO::PARAM_INT);
-                $stmt->execute();
-            }
-
-            $stmt = $conn->prepare("INSERT INTO orders (pizza_id, status_id) VALUES (:pizza, :status)");
-
-            $statusPendingId = 1;
-
-            $stmt->bindParam(":pizza", $pizzaId, PDO::PARAM_INT);
-            $stmt->bindParam(":status", $statusPendingId, PDO::PARAM_INT);
-            $stmt->execute();
-
-            $_SESSION["msg"] = "Order registered";
-            $_SESSION["status"] = "success";            
-        }
+        $_SESSION["msg"] = "Order registered";
+        $_SESSION["status"] = "success";
         header("Location: ../..");
+    }
+    
+    // Function to retrieve items from a table
+    function getItems($conn, $tableName) {
+        $query = $conn->query("SELECT * FROM $tableName;");
+        return $query->fetchAll();
+    }
+    
+    // Main logic to handle the request method
+    $method = $_SERVER["REQUEST_METHOD"];
+
+    if ($method === "GET") {
+        $sizes = getItems($conn, "sizes");
+        $crusts = getItems($conn, "crusts");
+        $toppings = getItems($conn, "toppings");
+    } else if ($method === "POST") {
+        handlePostRequest($conn);
     }
 ?>
