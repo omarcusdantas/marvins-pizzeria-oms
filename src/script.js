@@ -28,7 +28,7 @@ function toggleInactiveOrders(button) {
     changeButtonText(button);
 }
 
-// Function to maintain option selected without the need of holding Ctrl.
+// Function to maintain option selected without the need of holding Ctrl
 function selectWithoutCtrl() {
     const select = document.getElementById("toppings");
 
@@ -39,7 +39,7 @@ function selectWithoutCtrl() {
     });
 }
 
-// Find the inactive orders button and select input for toppings when the window is loaded
+// Find the inactive orders button and checks screen size
 window.onload = () => {
     const inactiveOrdersBtn = document.querySelector("#inactive-btn");
 
@@ -49,5 +49,9 @@ window.onload = () => {
         });
         return;
     }
-    selectWithoutCtrl();
+    
+    const isBigScreen = window.matchMedia("(min-width: 1024px)").matches;
+    if (isBigScreen) {
+        selectWithoutCtrl();
+    }
 };
