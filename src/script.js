@@ -28,7 +28,18 @@ function toggleInactiveOrders(button) {
     changeButtonText(button);
 }
 
-// Find the inactive orders button when the window is loaded
+// Function to maintain option selected without the need of holding Ctrl.
+function selectWithoutCtrl() {
+    const select = document.getElementById("toppings");
+
+    select.addEventListener('mousedown', (event) => {
+        event.preventDefault();
+        const option = event.target;
+        option.selected = !option.selected;
+    });
+}
+
+// Find the inactive orders button and select input for toppings when the window is loaded
 window.onload = () => {
     const inactiveOrdersBtn = document.querySelector("#inactive-btn");
 
@@ -36,5 +47,7 @@ window.onload = () => {
         inactiveOrdersBtn.addEventListener("click", () => {
             toggleInactiveOrders(inactiveOrdersBtn);
         });
+        return;
     }
+    selectWithoutCtrl();
 };
