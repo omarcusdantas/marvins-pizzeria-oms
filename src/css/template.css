@@ -136,6 +136,7 @@ main {
     .main-container,
     .orders-container {
         margin: 20px 0;
+        width: 90%;
     }
 }
 
@@ -155,11 +156,6 @@ main {
     .main-container h2,
     .orders-container h2 {
         font-size: 28px;
-    }
-
-    .main-container,
-    .orders-container {
-        width: 90%;
     }
 
     footer {
