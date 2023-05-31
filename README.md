@@ -1,5 +1,5 @@
 # [Marvin's Pizzeria OMS](http://omarcusdantas.000.pe/marvinspizzeria/)
-A web application for a fictional pizzeria called Marvin's Pizzeria that allows the staff to register and manage pizza orders.
+Marvin's Pizzeria OMS (Order Management System) is a web application for a fictional pizzeria called Marvin's Pizzeria that allows the staff to register and manage pizza orders.
 
 <p align="center">
 <img src="https://drive.google.com/uc?id=1-CWfdwnw1iHJ3YEFZ__MESRpOK4FWF5g" alt="Marvin's Pizzeria OMS"/>
