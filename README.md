@@ -23,7 +23,7 @@ The application provides a user-friendly interface for staff to place pizza orde
 
 To run Marvin's Pizzeria OMS locally, follow these steps:
 
-* Clone the repository: `git clone https://github.com/your-username/marvins-pizzeria-oms.git`
+* Clone the repository: `git clone https://github.com/omarcusdantas/marvins-pizzeria-oms.git`
 * Set up a local development environment with PHP and MySQL.
 * Import the database structure by executing the SQL file: `pizzeria.sql`.
 * Update the database credentials in the `src/process/conn.php` file.
