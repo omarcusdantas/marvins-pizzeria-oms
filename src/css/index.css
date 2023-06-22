@@ -13,9 +13,9 @@
 
 .main-banner h2 {
     background-color: rgba(0, 0, 0, 0.7);
-    font-size: 40px;
+    font-size: 4rem;
     color: #ffffff;
-    line-height: 60px;
+    line-height: 6rem;
     text-align: center;
     padding: 30px;
     width: 450px;
@@ -30,13 +30,13 @@
 }
 
 .pizza-form label {
-    font-size: 18px;
+    font-size: 1.8rem;
     font-weight: 700;
     margin: 8px 0;
 }
 
 .pizza-form select {
-    font-size: 16px;
+    font-size: 1.6rem;
     margin-bottom: 10px;
     height: 35px;
 }
@@ -49,7 +49,7 @@
 .pizza-form input {
     background-color: #007bff;
     color: #ffffff;
-    font-size: 20px;
+    font-size: 2rem;
     margin-top: 10px;
     height: 40px;
     border-radius: 10px;
@@ -74,16 +74,16 @@
     }
 
     .main-banner h2 {
-        font-size: 30px;
-        line-height: 40px;
+        font-size: 3rem;
+        line-height: 4rem;
         width: 250px;
     }
 
     .pizza-form label {
-        font-size: 16px;
+        font-size: 1.6rem;
     }
 
     .pizza-form input {
-        font-size: 18px;
+        font-size: 1.8rem;
     }
 }

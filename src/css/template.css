@@ -2,6 +2,10 @@
     box-sizing: border-box;
 }
 
+html {
+    font-size: 62.5%;
+}
+
 body {
     background-color: #fafafa;
     font-family: "Roboto", sans-serif;
@@ -16,7 +20,7 @@ h1 {
 }
 
 h2 {
-    font-size: 32px;
+    font-size: 3.2rem;
 }
 
 a {
@@ -105,7 +109,7 @@ main {
 }
 
 .alert {
-    font-size: 18px;
+    font-size: 1.8rem;
     text-align: center;
     font-weight: 700;
     padding: 20px;
@@ -146,7 +150,7 @@ main {
     }
 
     .nav-link {
-        font-size: 14px;
+        font-size: 1.4rem;
     }
 
     .logo img {
@@ -155,7 +159,7 @@ main {
 
     .main-container h2,
     .orders-container h2 {
-        font-size: 28px;
+        font-size: 2.8rem;
     }
 
     footer {
