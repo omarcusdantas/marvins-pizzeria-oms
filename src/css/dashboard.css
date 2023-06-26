@@ -43,6 +43,7 @@
 
 .orders-table thead tr {
     background-color: #b9b9b9;
+    font-size: 1.6rem;
     font-weight: 700;
     text-align: center;
     height: 40px;
@@ -58,6 +59,7 @@
 }
 
 .orders-table tbody td {
+    font-size: 1.6rem;
     text-align: center;
     padding: 20px;
     vertical-align: middle;

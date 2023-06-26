@@ -23,7 +23,12 @@ h2 {
     font-size: 3.2rem;
 }
 
+p {
+    font-size: 1.6rem;
+}
+
 a {
+    font-size: 1.6rem;
     text-decoration: none;
 }
 
